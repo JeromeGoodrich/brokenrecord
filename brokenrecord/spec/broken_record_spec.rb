@@ -9,6 +9,7 @@ describe BrokenRecord::Table do
   let (:table)  { BrokenRecord::Table.new({ name: "New_Table",db: test_db }) }
   let (:row1_info) { {id: 1, name: "Tester McTesterson"} }
   let (:row2_info) { {id: 2, name: "Jerome Goodrich"} }
+  let (:row3_info) { {id: 3, name: "Tester McTesterson"}}
 
   before do
     test_db.execute("CREATE TABLE new_table(id INTEGER PRIMARY KEY, name STRING)")
@@ -77,7 +78,18 @@ describe BrokenRecord::Table do
     table.new_row(row1_info)
     table.new_row(row2_info)
 
-    expect(table.where(identifier)).to eq(row1_info)
+    expect(table.find(identifier)).to eq(row1_info)
+  end
+
+  it "can filter rows using a simple query" do
+    table.get_columns
+    filter = {name: "Tester McTesterson"}
+    table.new_row(row1_info)
+    table.new_row(row2_info)
+    table.new_row(row3_info)
+
+
+    expect(table.where(filter).count).to eq(2)
   end
 
 end

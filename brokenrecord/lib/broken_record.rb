@@ -50,7 +50,7 @@ module BrokenRecord
     end
 
     def update(identifier, params)
-      row_data = where(identifier)
+      row_data = find(identifier)
       values = get_values(params)
       @db.execute("UPDATE #{@name}
                    SET #{params.keys[0]}=#{values[0]}
@@ -58,7 +58,7 @@ module BrokenRecord
     end
 
     def delete_row(identifier)
-      row_data = where(identifier)
+      row_data = find(identifier)
       @db.execute("DELETE FROM #{@name} WHERE #{row_data.keys[0]}=#{row_data.values[0]}")
     end
 
@@ -68,7 +68,7 @@ module BrokenRecord
       return values
     end
 
-    def where(identifier)
+    def find(identifier)
       row_data = nil
       rows.each do |row|
         if row.values.include?(identifier.values[0])
@@ -76,6 +76,16 @@ module BrokenRecord
         end
         return row_data
       end
+    end
+
+    def where(filter)
+      row_data = []
+      rows.each do |row|
+        if row.values.include?(filter.values[0])
+          row_data << row
+        end
+      end
+      return row_data
     end
 
     def pack_row_value(column_type, row_value)
