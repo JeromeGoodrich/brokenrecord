@@ -7,6 +7,8 @@ describe BrokenRecord::Table do
 
   let (:test_db) { SQLite3::Database.new(":memory:") }
   let (:table)  { BrokenRecord::Table.new({ name: "New_Table",db: test_db }) }
+  let (:row1_info) { {id: 1, name: "Tester McTesterson"} }
+  let (:row2_info) { {id: 2, name: "Jerome Goodrich"} }
 
   before do
     test_db.execute("CREATE TABLE new_table(id INTEGER PRIMARY KEY, name STRING)")
@@ -26,18 +28,56 @@ describe BrokenRecord::Table do
     expect(columns[:name][:type]).to eq("STRING")
   end
 
-  it "it is able create new rows and get their info" do
+  it "can create new rows and read their info" do
     table.get_columns
-    params = { id: "1", name: "row1"}
 
-    table.new_row(params)
+    table.new_row(row1_info)
+    table.new_row(row2_info)
 
-    expect(table.rows.count).to eq(1)
-
-    #need to figure out how to make a hash out of the 2-ple that the SQLite code gives me
-    #expect(table.rows.first[:id]).to eq("1")
-    # expect(record[:name]).to eq("row1")
+    expect(table.rows.count).to eq(2)
   end
 
+  it "can read row data" do
+    table.get_columns
+
+    table.new_row(row1_info)
+    table.new_row(row2_info)
+
+    expect(table.rows.first[:id]).to eq(1)
+    expect(table.rows.last[:name]).to eq("Jerome Goodrich")
+  end
+
+  it "can update row data" do
+    table.get_columns
+    new_info = {name: "Dr. Evil"}
+    identifier = {:id => 1}
+    table.new_row(row1_info)
+    table.new_row(row2_info)
+
+    table.update(identifier, new_info)
+
+    expect(table.rows.count).to eq(2)
+    expect(table.rows.first[:name]).to eq("Dr. Evil")
+   end
+
+  it "can delete a row" do
+    table.get_columns
+    table.new_row(row1_info)
+    identifier = {name: "Tester McTesterson"}
+
+    expect(table.rows.count).to eq(1)
+    table.delete_row(identifier)
+
+    expect(table.rows.count).to eq(0)
+  end
+
+  it "can find a row using a simple query" do
+    table.get_columns
+    identifier = {name: "Tester McTesterson"}
+    table.new_row(row1_info)
+    table.new_row(row2_info)
+
+    expect(table.where(identifier)).to eq(row1_info)
+  end
 
 end
