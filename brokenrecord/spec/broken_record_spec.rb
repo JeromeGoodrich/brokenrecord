@@ -21,7 +21,6 @@ describe BrokenRecord::Table do
   end
 
   it "is able to get column info" do
-    table.get_columns
     columns = table.columns
 
     expect(columns.count).to eq(2)
@@ -30,7 +29,6 @@ describe BrokenRecord::Table do
   end
 
   it "can create new rows and read their info" do
-    table.get_columns
 
     table.new_row(row1_info)
     table.new_row(row2_info)
@@ -39,7 +37,6 @@ describe BrokenRecord::Table do
   end
 
   it "can read row data" do
-    table.get_columns
 
     table.new_row(row1_info)
     table.new_row(row2_info)
@@ -49,7 +46,6 @@ describe BrokenRecord::Table do
   end
 
   it "can update row data" do
-    table.get_columns
     new_info = {name: "Dr. Evil"}
     identifier = {:id => 1}
     table.new_row(row1_info)
@@ -62,7 +58,6 @@ describe BrokenRecord::Table do
    end
 
   it "can delete a row" do
-    table.get_columns
     table.new_row(row1_info)
     identifier = {name: "Tester McTesterson"}
 
@@ -73,7 +68,6 @@ describe BrokenRecord::Table do
   end
 
   it "can find a row using a simple query" do
-    table.get_columns
     identifier = {name: "Tester McTesterson"}
     table.new_row(row1_info)
     table.new_row(row2_info)
@@ -82,7 +76,6 @@ describe BrokenRecord::Table do
   end
 
   it "can filter rows using a simple query" do
-    table.get_columns
     filter = {name: "Tester McTesterson"}
     table.new_row(row1_info)
     table.new_row(row2_info)
